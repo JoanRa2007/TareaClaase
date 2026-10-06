@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import pe.edu.upeu.pharmamobil.domain.model.Producto
+import pe.edu.upeu.pharmamobil.domain.platform.Compartidor
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoListaEstado
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoViewModel
 import pe.edu.upeu.pharmamobil.domain.repository.ProductoRepository
@@ -32,6 +33,10 @@ class ProductoViewModelTest {
     @AfterTest
     fun limpiar() {
         Dispatchers.resetMain()
+    }
+
+    private class CompartidorFake : Compartidor {
+        override fun compartir(texto: String) {}
     }
 
 
@@ -84,7 +89,8 @@ class ProductoViewModelTest {
         val repositorio = RepositorioVacio()
         val viewModel = ProductoViewModel(
             registrarProductoUseCase = RegistrarProductoUseCase(repositorio),
-            productoRepository = repositorio
+            productoRepository = repositorio,
+            compartidor = CompartidorFake()
         )
 
         dispatcher.scheduler.advanceUntilIdle()
@@ -97,7 +103,8 @@ class ProductoViewModelTest {
         val repositorio = RepositorioConProductos()
         val viewModel = ProductoViewModel(
             registrarProductoUseCase = RegistrarProductoUseCase(repositorio),
-            productoRepository = repositorio
+            productoRepository = repositorio,
+            compartidor = CompartidorFake()
         )
 
         dispatcher.scheduler.advanceUntilIdle()
@@ -112,7 +119,8 @@ class ProductoViewModelTest {
         val repositorio = RepositorioConError()
         val viewModel = ProductoViewModel(
             registrarProductoUseCase = RegistrarProductoUseCase(repositorio),
-            productoRepository = repositorio
+            productoRepository = repositorio,
+            compartidor = CompartidorFake()
         )
 
         dispatcher.scheduler.advanceUntilIdle()
@@ -127,7 +135,8 @@ class ProductoViewModelTest {
         val repositorio = RepositorioEspiaRegistro()
         val viewModel = ProductoViewModel(
             registrarProductoUseCase = RegistrarProductoUseCase(repositorio),
-            productoRepository = repositorio
+            productoRepository = repositorio,
+            compartidor = CompartidorFake()
         )
         dispatcher.scheduler.advanceUntilIdle()
 

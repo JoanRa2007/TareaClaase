@@ -15,11 +15,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
@@ -156,7 +158,7 @@ fun ProductoScreen(
                                 items = productosFiltrados,
                                 key = { it.id }
                             ) { producto ->
-                                ProductoItem(producto)
+                                ProductoItem(producto, viewModel::compartirProducto)
                             }
                         }
                     }
@@ -236,7 +238,7 @@ private fun FormularioProductoCard(
 }
 
 @Composable
-private fun ProductoItem(producto: Producto) {
+private fun ProductoItem(producto: Producto, onCompartir: (Producto) -> Unit) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.padding(12.dp),
@@ -281,6 +283,14 @@ private fun ProductoItem(producto: Producto) {
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
+            }
+
+            IconButton(onClick = { onCompartir(producto) }) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Compartir producto",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
