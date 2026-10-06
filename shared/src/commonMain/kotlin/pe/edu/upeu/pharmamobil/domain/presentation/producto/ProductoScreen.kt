@@ -39,6 +39,7 @@ import pe.edu.upeu.pharmamobil.domain.model.Producto
 import pe.edu.upeu.pharmamobil.domain.presentation.components.EstadoVacio
 import pe.edu.upeu.pharmamobil.domain.presentation.components.MensajeExito
 import pe.edu.upeu.pharmamobil.domain.presentation.components.ValidatedTextField
+import pe.edu.upeu.pharmamobil.platform.formatearSoles
 
 @Composable
 fun ProductoScreen(
@@ -262,7 +263,7 @@ private fun ProductoItem(producto: Producto) {
                     style = MaterialTheme.typography.titleSmall
                 )
                 Text(
-                    text = "S/ ${producto.precio}  ·  ${producto.stock} u.",
+                    text = "${formatearSoles(producto.precio)}  ·  ${producto.stock} u.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
