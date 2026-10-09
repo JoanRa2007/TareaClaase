@@ -42,6 +42,7 @@ import pe.edu.upeu.pharmamobil.domain.presentation.components.EstadoVacio
 import pe.edu.upeu.pharmamobil.domain.presentation.components.MensajeExito
 import pe.edu.upeu.pharmamobil.domain.presentation.components.ValidatedTextField
 import pe.edu.upeu.pharmamobil.platform.formatearSoles
+import pe.edu.upeu.pharmamobil.platform.obtenerInfoDispositivo
 
 @Composable
 fun ProductoScreen(
@@ -59,6 +60,11 @@ fun ProductoScreen(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        Text(
+            text = "Dispositivo: ${obtenerInfoDispositivo()}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         FormularioProductoCard(
             nombre = formulario.nombre,
