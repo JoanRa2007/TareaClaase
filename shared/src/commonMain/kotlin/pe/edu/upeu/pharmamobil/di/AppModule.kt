@@ -7,9 +7,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.module.Module
 import org.koin.dsl.KoinAppDeclaration
 import org.koin.dsl.module
+import pe.edu.upeu.pharmamobil.data.remote.AuthApi
 import pe.edu.upeu.pharmamobil.data.remote.ProductoApi
 import pe.edu.upeu.pharmamobil.data.remote.crearHttpClient
 import pe.edu.upeu.pharmamobil.data.repository.ProductoRepositorioEnMemoria
+import pe.edu.upeu.pharmamobil.data.repository.TokenManager
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoViewModel
 import pe.edu.upeu.pharmamobil.domain.repository.ProductoRepository
 import pe.edu.upeu.pharmamobil.domain.usecase.RegistrarProductoUseCase
@@ -17,7 +19,9 @@ import pe.edu.upeu.pharmamobil.domain.usecase.RegistrarProductoUseCase
 expect val platformModule: Module
 
 val networkModule = module {
-    single<HttpClient> { crearHttpClient(get<HttpClientEngine>()) }
+    single { TokenManager() }
+    single<HttpClient> { crearHttpClient(get<HttpClientEngine>()) { get<TokenManager>().obtenerToken() } }
+    single { AuthApi(get()) }
     single { ProductoApi(get()) }
 }
 

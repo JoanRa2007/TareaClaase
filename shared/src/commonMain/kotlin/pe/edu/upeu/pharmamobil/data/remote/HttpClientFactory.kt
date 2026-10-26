@@ -12,8 +12,9 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import pe.edu.upeu.pharmamobil.platform.getBaseUrl
 
-fun crearHttpClient(engine: HttpClientEngine): HttpClient =
+fun crearHttpClient(engine: HttpClientEngine, tokenProvider: () -> String? = { null }): HttpClient =
     HttpClient(engine) {
         expectSuccess = true
         install(ContentNegotiation) {
@@ -29,14 +30,17 @@ fun crearHttpClient(engine: HttpClientEngine): HttpClient =
                     println("PHARMA_KTOR_LOG: $message")
                 }
             }
-            level = LogLevel.HEADERS
+            level = LogLevel.INFO
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 15000
             connectTimeoutMillis = 10000
         }
         defaultRequest {
-            url("https://api.escuelajs.co/api/v1/")
+            url(getBaseUrl())
             contentType(ContentType.Application.Json)
+            tokenProvider()?.let { token ->
+                headers.append("Authorization", "Bearer $token")
+            }
         }
     }
