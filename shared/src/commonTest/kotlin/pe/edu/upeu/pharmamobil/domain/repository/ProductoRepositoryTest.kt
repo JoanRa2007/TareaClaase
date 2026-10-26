@@ -16,7 +16,7 @@ class ProductoRepositoryTest {
     // MockEngine simula una respuesta de red sin llamar a internet real.
     private val mockEngine = MockEngine { _ ->
         respond(
-            content = "[]",
+            content = "{\"contenido\":[]}",
             status = HttpStatusCode.OK,
             headers = headersOf(HttpHeaders.ContentType, "application/json")
         )

@@ -10,6 +10,7 @@ import org.koin.dsl.module
 import pe.edu.upeu.pharmamobil.data.remote.AuthApi
 import pe.edu.upeu.pharmamobil.data.remote.ProductoApi
 import pe.edu.upeu.pharmamobil.data.remote.crearHttpClient
+import pe.edu.upeu.pharmamobil.data.repository.AuthRepository
 import pe.edu.upeu.pharmamobil.data.repository.ProductoRepositorioEnMemoria
 import pe.edu.upeu.pharmamobil.data.repository.TokenManager
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoViewModel
@@ -26,6 +27,7 @@ val networkModule = module {
 }
 
 val repositoryModule = module {
+    single { AuthRepository(get(), get()) }
     single<ProductoRepository> { ProductoRepositorioEnMemoria(get()) }
 }
 

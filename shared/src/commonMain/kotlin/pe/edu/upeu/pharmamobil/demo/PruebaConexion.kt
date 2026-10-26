@@ -24,7 +24,7 @@ fun probarTimeout(api: ProductoApi) {
     CoroutineScope(Dispatchers.Default).launch {
         try {
             val productos = api.obtenerProductosRemotos()
-            println("PHARMA_TEST_TIMEOUT: respuesta inesperada -> ${productos.size} productos")
+            println("PHARMA_TEST_TIMEOUT: respuesta inesperada -> ${productos.contenido.size} productos")
         } catch (e: HttpRequestTimeoutException) {
             println("PHARMA_TEST_TIMEOUT: excepcion capturada -> ${e.message}")
         } catch (e: Exception) {
