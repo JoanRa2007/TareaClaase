@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
+import pe.edu.upeu.pharmamobil.domain.presentation.auth.LoginScreen
+import pe.edu.upeu.pharmamobil.domain.presentation.auth.LoginViewModel
 import pe.edu.upeu.pharmamobil.domain.presentation.cliente.ClienteScreen
 import pe.edu.upeu.pharmamobil.domain.presentation.inicio.InicioScreen
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoScreen
@@ -46,12 +48,22 @@ import pe.edu.upeu.pharmamobil.theme.PharmaMobilTheme
 
 @Composable
 fun App() {
-    var pantallaActual by remember {
-        mutableStateOf<Screen>(Screen.Inicio)
+    var isLoggedIn by remember { mutableStateOf(false) }
+    var darkTheme by remember { mutableStateOf(false) }
+
+    if (!isLoggedIn) {
+        PharmaMobilTheme(darkTheme = darkTheme) {
+            val loginViewModel = koinViewModel<LoginViewModel>()
+            LoginScreen(
+                viewModel = loginViewModel,
+                onLoginSuccess = { isLoggedIn = true }
+            )
+        }
+        return
     }
 
-    var darkTheme by remember {
-        mutableStateOf(false)
+    var pantallaActual by remember {
+        mutableStateOf<Screen>(Screen.Inicio)
     }
 
     val drawerState = rememberDrawerState(
@@ -312,36 +324,4 @@ private fun tituloPantalla(
         Screen.Pedidos ->
             "Pedidos"
     }
-
-    /*
-    MaterialTheme {
-
-        val productoRepository = remember { ProductoRepository() }
-
-        var tabSeleccionado by rememberSaveable { mutableStateOf(0) }
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .safeContentPadding()
-        ) {
-
-            PrimaryTabRow(selectedTabIndex = tabSeleccionado) {
-                TITULOS.forEachIndexed { indice, titulo ->
-                    Tab(
-                        selected = tabSeleccionado == indice,
-                        onClick = { tabSeleccionado = indice },
-                        text = { Text(titulo) }
-                    )
-                }
-            }
-
-            when (tabSeleccionado) {
-                0 -> ClienteScreen()
-                else -> ProductoScreen(
-                    onRegistrar = { productoRepository.registrar(it) }
-                )
-            }
-        }
-    }*/
 }

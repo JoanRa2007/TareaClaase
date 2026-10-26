@@ -13,6 +13,7 @@ import pe.edu.upeu.pharmamobil.data.remote.crearHttpClient
 import pe.edu.upeu.pharmamobil.data.repository.AuthRepository
 import pe.edu.upeu.pharmamobil.data.repository.ProductoRepositorioEnMemoria
 import pe.edu.upeu.pharmamobil.data.repository.TokenManager
+import pe.edu.upeu.pharmamobil.domain.presentation.auth.LoginViewModel
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoViewModel
 import pe.edu.upeu.pharmamobil.domain.repository.ProductoRepository
 import pe.edu.upeu.pharmamobil.domain.usecase.RegistrarProductoUseCase
@@ -37,6 +38,7 @@ val useCaseModule = module {
 
 val viewModelModule = module {
     viewModelOf(::ProductoViewModel)
+    viewModelOf(::LoginViewModel)
 }
 
 fun initKoin(config: KoinAppDeclaration? = null) {
