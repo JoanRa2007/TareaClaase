@@ -1,3 +1,3 @@
 package pe.edu.upeu.pharmamobil.platform
 
-expect fun getBaseUrl(): String
+expect val URL_BASE: String
