@@ -21,8 +21,12 @@ import pe.edu.upeu.pharmamobil.platform.URL_BASE
 
 fun crearHttpClient(
     motor: HttpClientEngine,
-    almacen: AlmacenSeguro,
-    esDepuracion: Boolean
+    almacen: AlmacenSeguro = object : AlmacenSeguro {
+        override fun guardarToken(token: String) {}
+        override fun leerToken(): String? = null
+        override fun borrarToken() {}
+    },
+    esDepuracion: Boolean = false
 ): HttpClient =
     HttpClient(motor) {
         expectSuccess = true

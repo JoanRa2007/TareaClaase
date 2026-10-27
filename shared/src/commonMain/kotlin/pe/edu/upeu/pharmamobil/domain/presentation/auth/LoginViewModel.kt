@@ -7,12 +7,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import pe.edu.upeu.pharmamobil.data.repository.AuthRepository
-import pe.edu.upeu.pharmamobil.data.repository.TokenManager
+import pe.edu.upeu.pharmamobil.domain.model.Credenciales
+import pe.edu.upeu.pharmamobil.domain.model.ErrorSesion
+import pe.edu.upeu.pharmamobil.domain.model.SesionException
+import pe.edu.upeu.pharmamobil.domain.repository.AuthRepository
 
 class LoginViewModel(
-    private val authRepository: AuthRepository,
-    private val tokenManager: TokenManager
+    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
@@ -36,14 +37,32 @@ class LoginViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             try {
-                authRepository.login(state.username.trim(), state.password)
+                authRepository.iniciarSesion(
+                    Credenciales(
+                        usuario = state.username.trim(),
+                        clave = state.password
+                    )
+                )
                 _uiState.update { it.copy(isLoading = false, success = true) }
                 onSuccess()
+            } catch (e: SesionException) {
+                val mensajeError = when (e.error) {
+                    ErrorSesion.CredencialesInvalidas -> "Usuario o contraseña incorrectos"
+                    ErrorSesion.SesionExpirada -> "La sesión ha expirado"
+                    ErrorSesion.SinPermiso -> "No tiene permisos para realizar esta operación"
+                    ErrorSesion.SinConexion -> "Error de conexión. Intente nuevamente"
+                }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = mensajeError
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        error = "Credenciales incorrectas o error de conexión"
+                        error = e.message ?: "Error al iniciar sesión"
                     )
                 }
             }
