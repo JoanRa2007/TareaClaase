@@ -16,6 +16,7 @@ import pe.edu.upeu.pharmamobil.domain.presentation.auth.LoginViewModel
 import pe.edu.upeu.pharmamobil.domain.presentation.producto.ProductoViewModel
 import pe.edu.upeu.pharmamobil.domain.repository.AuthRepository
 import pe.edu.upeu.pharmamobil.domain.repository.ProductoRepository
+import pe.edu.upeu.pharmamobil.domain.session.SesionManager
 import pe.edu.upeu.pharmamobil.domain.usecase.RegistrarProductoUseCase
 
 expect val platformModule: Module
@@ -26,6 +27,7 @@ val networkModule = module {
 }
 
 val repositoryModule = module {
+    single<SesionManager> { SesionManager() }
     single<AuthRepository> { AuthRepositorioRest(get(), get()) }
     single<ProductoRepository> { ProductoRepositorioRest(get()) }
 }

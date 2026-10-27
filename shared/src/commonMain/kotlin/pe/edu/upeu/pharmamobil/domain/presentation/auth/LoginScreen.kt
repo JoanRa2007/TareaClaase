@@ -21,15 +21,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import pe.edu.upeu.pharmamobil.domain.presentation.components.ValidatedTextField
+import pe.edu.upeu.pharmamobil.domain.session.SesionManager
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
-    onLoginSuccess: () -> Unit
+    sesionManager: SesionManager = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val aviso by sesionManager.aviso.collectAsState()
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -53,7 +57,24 @@ fun LoginScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            aviso?.let { mensajeAviso ->
+                Surface(
+                    color = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                    shape = MaterialTheme.shapes.small,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                ) {
+                    Text(
+                        text = mensajeAviso,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
+            }
 
             ValidatedTextField(
                 value = uiState.username,
@@ -73,6 +94,7 @@ fun LoginScreen(
                 error = null,
                 leadingIcon = Icons.Default.Lock,
                 keyboardType = KeyboardType.Password,
+                visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -88,7 +110,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = { viewModel.login(onLoginSuccess) },
+                onClick = { viewModel.login() },
                 enabled = !uiState.isLoading,
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -98,7 +120,7 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("Ingresar")
+                    Text("Iniciar sesión")
                 }
             }
         }

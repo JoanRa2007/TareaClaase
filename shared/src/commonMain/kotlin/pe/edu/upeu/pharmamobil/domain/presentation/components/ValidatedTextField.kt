@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.VisualTransformation
 
 @Composable
 fun ValidatedTextField(
@@ -19,7 +20,8 @@ fun ValidatedTextField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     leadingIcon: ImageVector? = null,
     ayuda: String? = null,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    visualTransformation: VisualTransformation = VisualTransformation.None
 ) {
     val apoyo = error ?: ayuda
 
@@ -30,6 +32,7 @@ fun ValidatedTextField(
         isError = error != null,
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+        visualTransformation = visualTransformation,
         leadingIcon = leadingIcon?.let { { Icon(imageVector = it, contentDescription = null) } },
         supportingText = apoyo?.let { { Text(it) } },
         modifier = modifier

@@ -62,4 +62,15 @@ class AuthRepositorioRest(
             null
         }
     }
+
+    override suspend fun probar403() {
+        ejecutarConMapeoError(esLogin = false) {
+            cliente.get("clientes")
+        }
+    }
+
+    override fun invalidarTokenPrueba() {
+        almacen.guardarToken("token_invalido_basura")
+        cliente.authProvider<BearerAuthProvider>()?.clearToken()
+    }
 }

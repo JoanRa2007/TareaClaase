@@ -35,20 +35,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import org.koin.compose.koinInject
 import pe.edu.upeu.pharmamobil.domain.model.Producto
 import pe.edu.upeu.pharmamobil.domain.presentation.components.EstadoVacio
 import pe.edu.upeu.pharmamobil.domain.presentation.components.MensajeExito
 import pe.edu.upeu.pharmamobil.domain.presentation.components.ValidatedTextField
+import pe.edu.upeu.pharmamobil.domain.session.SesionManager
 
 @Composable
 fun ProductoScreen(
-    viewModel: ProductoViewModel
+    viewModel: ProductoViewModel,
+    sesionManager: SesionManager = koinInject()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val sesion by sesionManager.sesion.collectAsState()
     val formulario = uiState.formulario
 
     var tabSeleccionada by remember { mutableStateOf(0) }
     val titulosTabs = listOf("Activos", "Inactivos", "Bajo Stock")
+
+    val puedeEscribir = sesion?.puede("CATALOGO_ESCRIBIR") == true
 
     Column(
         modifier = Modifier
@@ -57,22 +63,24 @@ fun ProductoScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        FormularioProductoCard(
-            nombre = formulario.nombre,
-            precio = formulario.precio,
-            stock = formulario.stock,
-            nombreError = formulario.nombreError,
-            precioError = formulario.precioError,
-            stockError = formulario.stockError,
-            enviando = formulario.enviando,
-            onNombreChange = viewModel::onNombreChange,
-            onPrecioChange = viewModel::onPrecioChange,
-            onStockChange = viewModel::onStockChange,
-            onRegistrar = viewModel::registrar
-        )
+        if (puedeEscribir) {
+            FormularioProductoCard(
+                nombre = formulario.nombre,
+                precio = formulario.precio,
+                stock = formulario.stock,
+                nombreError = formulario.nombreError,
+                precioError = formulario.precioError,
+                stockError = formulario.stockError,
+                enviando = formulario.enviando,
+                onNombreChange = viewModel::onNombreChange,
+                onPrecioChange = viewModel::onPrecioChange,
+                onStockChange = viewModel::onStockChange,
+                onRegistrar = viewModel::registrar
+            )
 
-        formulario.mensajeExito?.let {
-            MensajeExito(it)
+            formulario.mensajeExito?.let {
+                MensajeExito(it)
+            }
         }
 
         Text(

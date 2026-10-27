@@ -7,12 +7,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pe.edu.upeu.pharmamobil.domain.model.ErrorSesion
+import pe.edu.upeu.pharmamobil.domain.model.SesionException
 import pe.edu.upeu.pharmamobil.domain.repository.ProductoRepository
+import pe.edu.upeu.pharmamobil.domain.session.SesionManager
 import pe.edu.upeu.pharmamobil.domain.usecase.RegistrarProductoUseCase
 
 class ProductoViewModel(
     private val registrarProductoUseCase: RegistrarProductoUseCase,
-    private val productoRepository: ProductoRepository
+    private val productoRepository: ProductoRepository,
+    private val sesionManager: SesionManager = SesionManager()
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductoUiState())
@@ -34,6 +38,22 @@ class ProductoViewModel(
                         else
                             ProductoListaEstado.ConProductos(productos)
                     )
+                }
+            } catch (e: SesionException) {
+                when (e.error) {
+                    ErrorSesion.SesionExpirada -> {
+                        sesionManager.expirar("Tu sesión expiró. Inicia sesión nuevamente")
+                    }
+                    ErrorSesion.SinPermiso -> {
+                        _uiState.update {
+                            it.copy(lista = ProductoListaEstado.Error("No tienes permisos para realizar esta operación"))
+                        }
+                    }
+                    else -> {
+                        _uiState.update {
+                            it.copy(lista = ProductoListaEstado.Error("No hay conexión con el servidor"))
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -92,6 +112,33 @@ class ProductoViewModel(
                                 stockError = error.errores.stock
                             )
                         )
+                    }
+                } else if (error is SesionException) {
+                    when (error.error) {
+                        ErrorSesion.SesionExpirada -> {
+                            _uiState.update { it.copy(formulario = it.formulario.copy(enviando = false)) }
+                            sesionManager.expirar("Tu sesión expiró. Inicia sesión nuevamente")
+                        }
+                        ErrorSesion.SinPermiso -> {
+                            _uiState.update {
+                                it.copy(
+                                    formulario = it.formulario.copy(
+                                        enviando = false,
+                                        nombreError = "No tienes permisos para realizar esta operación"
+                                    )
+                                )
+                            }
+                        }
+                        else -> {
+                            _uiState.update {
+                                it.copy(
+                                    formulario = it.formulario.copy(
+                                        enviando = false,
+                                        nombreError = "No hay conexión con el servidor"
+                                    )
+                                )
+                            }
+                        }
                     }
                 } else {
                     _uiState.update { it.copy(formulario = it.formulario.copy(enviando = false)) }
